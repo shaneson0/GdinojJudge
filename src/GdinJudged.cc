@@ -37,7 +37,7 @@ int main( int argc , char ** argv )
 	chdir(work_path) ;
 
 	//判断设置是否合理
-
+	
 
 	//compile
 	compile() ;
