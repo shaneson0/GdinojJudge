@@ -119,8 +119,11 @@ static int use_ptrace = 1;
 #define ZOJ_COM
 MYSQL *conn;
 
+//定义语言s
 static char lang_ext[17][8] = { "c", "cc", "pas", "java", "rb", "sh", "py",
 		"php", "pl", "cs", "m", "bas", "scm","c","cc","lua","js" };
+
+//
 //static char buf[BUFFER_SIZE];
 int data_list_has(char * file){
    for(int i=0;i<data_list_len;i++){
@@ -129,6 +132,8 @@ int data_list_has(char * file){
    }
    return 0;
 }
+
+//
 int data_list_add(char * file){
    if(data_list_len<BUFFER_SIZE-1){
 	strcpy(data_list[data_list_len],file);
@@ -160,7 +165,7 @@ void write_log(const char *fmt, ...) {
 		system("pwd");
 	}
 	va_start(ap, fmt);
-	//l = 
+	//l =
 	vsprintf(buffer, fmt, ap);
 	fprintf(fp, "%s\n", buffer);
 	if (DEBUG)
@@ -382,7 +387,7 @@ const char * getFileNameFromPath(const char * path) {
 }
 
 void make_diff_out_full(FILE *f1, FILE *f2, int c1, int c2, const char * path) {
-	
+
 	execute_cmd("echo '========[%s]========='>>diff.out",getFileNameFromPath(path));
 	execute_cmd("echo '------test in top 100 lines------'>>diff.out");
 	execute_cmd("head -100 data.in>>diff.out");
@@ -454,7 +459,7 @@ int compare_zoj(const char *file1, const char *file2) {
 				}
 			}
 		}
-	end: 
+	end:
 	if (ret == OJ_WA||ret==OJ_PE){
 		if(full_diff)
 			make_diff_out_full(f1, f2, c1, c2, file1);
@@ -902,7 +907,7 @@ int compile(int lang) {
 
 		if(lang==3){
 		   LIM.rlim_max = STD_MB << 11;
-		   LIM.rlim_cur = STD_MB << 11;	
+		   LIM.rlim_cur = STD_MB << 11;
                 }else{
 		   LIM.rlim_max = STD_MB << 10;
 		   LIM.rlim_cur = STD_MB << 10;
@@ -1212,7 +1217,7 @@ void get_problem_info(int p_id, int & time_lmt, int & mem_lmt, int & isspj) {
 		_get_problem_info_mysql(p_id, time_lmt, mem_lmt, isspj);
 	}
 	if(time_lmt<=0) time_lmt=1;
-	
+
 }
 
 void prepare_files(char * filename, int namelen, char * infile, int & p_id,
@@ -1479,7 +1484,7 @@ void copy_js_runtime(char * work_dir) {
 	execute_cmd("/bin/cp /lib/i386-linux-gnu/libc.so.6  %s/lib/i386-linux-gnu/", work_dir);
 	execute_cmd("/bin/cp /lib/i386-linux-gnu/libdl.so.2  %s/lib/i386-linux-gnu/", work_dir);
 	execute_cmd("/bin/cp /lib/i386-linux-gnu/librt.so.1   %s/lib/i386-linux-gnu/", work_dir);
-	
+
 	execute_cmd("/bin/mkdir -p %s/usr/lib /lib/x86_64-linux-gnu/", work_dir);
         execute_cmd("/bin/cp /lib/x86_64-linux-gnu/libpthread.so.0  %s/lib/x86_64-linux-gnu/", work_dir);
         execute_cmd("/bin/cp /usr/lib/x86_64-linux-gnu/libnspr4.so  %s/lib/x86_64-linux-gnu/", work_dir);
@@ -1781,7 +1786,7 @@ void watch_solution(pid_t pidApp, char * infile, int & ACflg, int isspj,
 	int status, sig, exitcode;
 	struct user_regs_struct reg;
 	struct rusage ruse;
-	if(topmemory==0) 
+	if(topmemory==0)
 			topmemory= get_proc_status(pidApp, "VmRSS:") << 10;
 	while (1) {
 		// check the usage
@@ -1861,7 +1866,7 @@ void watch_solution(pid_t pidApp, char * infile, int & ACflg, int isspj,
 		if (WIFSIGNALED(status)) {
 			/*  WIFSIGNALED: if the process is terminated by signal
 			 *
-			 *  psignal(int sig, char *s)，like perror(char *s)，print out s, with error msg from system of sig  
+			 *  psignal(int sig, char *s)，like perror(char *s)，print out s, with error msg from system of sig
 			 * sig = 5 means Trace/breakpoint trap
 			 * sig = 11 means Segmentation fault
 			 * sig = 25 means File size limit exceeded
@@ -1904,7 +1909,7 @@ void watch_solution(pid_t pidApp, char * infile, int & ACflg, int isspj,
 			//call_counter[reg.REG_SYSCALL]--;
 		}else if (record_call) {
 			call_counter[reg.REG_SYSCALL] = 1;
-		
+
 		}else { //do not limit JVM syscall for using different JVM
 			ACflg = OJ_RE;
 			char error[BUFFER_SIZE];
@@ -1915,18 +1920,18 @@ void watch_solution(pid_t pidApp, char * infile, int & ACflg, int isspj,
                                         "if you are admin and you don't know what to do ,\n"
                                         " tech support can be found on http://hustoj.taobao.com\n",
                                         solution_id, (long)reg.REG_SYSCALL);
- 
+
 			write_log(error);
 			print_runtimeerror(error);
 			ptrace(PTRACE_KILL, pidApp, NULL, NULL);
 		}
-		
+
 
 		ptrace(PTRACE_SYSCALL, pidApp, NULL, NULL);
 	}
 	usedtime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000);
 	usedtime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000);
-	
+
 	//clean_session(pidApp);
 }
 void clean_workdir(char * work_dir) {
@@ -2274,9 +2279,9 @@ int main(int argc, char** argv) {
 		if (namelen == 0)
 			continue;
 
-		if(http_judge&&(!data_list_has(dirp->d_name))) 
+		if(http_judge&&(!data_list_has(dirp->d_name)))
 			continue;
-	
+
 		prepare_files(dirp->d_name, namelen, infile, p_id, work_dir, outfile,
 				userfile, runner_id);
 		init_syscalls_limits(lang);

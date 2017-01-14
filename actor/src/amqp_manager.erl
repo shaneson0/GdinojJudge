@@ -25,13 +25,19 @@
   terminate/2,
   code_change/3]).
 
+-export([judge/1]).
+
 -define(SERVER, ?MODULE).
 
--record(state, {}).
+-record(state, {channel , queue}).
 
 %%%===================================================================
 %%% API
 %%%===================================================================
+
+judge(Msg) ->
+  gen_server:cast(?MODULE , {judge_msg , Msg}).
+
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -63,7 +69,14 @@ start_link() ->
   {ok, State :: #state{}} | {ok, State :: #state{}, timeout() | hibernate} |
   {stop, Reason :: term()} | ignore).
 init([]) ->
-  {ok, #state{}}.
+  {ok, Connection} = amqp_connection:start(#amqp_params_network{}),
+  {ok, Channel} = amqp_connection:open_channel(Connection),
+
+  Queue = <<"task_queue">> ,
+  amqp_channel:call(Channel, #'queue.declare'{queue = Queue, durable = true}),
+
+
+  {ok, #state{channel = Channel , queue = Queue}}.
 
 %%--------------------------------------------------------------------
 %% @private
@@ -94,6 +107,20 @@ handle_call(_Request, _From, State) ->
   {noreply, NewState :: #state{}} |
   {noreply, NewState :: #state{}, timeout() | hibernate} |
   {stop, Reason :: term(), NewState :: #state{}}).
+
+handle_cast( {judge_msg , Msg} , State  ) ->
+
+  Channel = State#state.channel ,
+  Queue   = State#state.queue ,
+
+  amqp_channel:cast(Channel,
+    #'basic.publish'{
+      exchange = <<"">>,
+      routing_key = Queue},
+    #amqp_msg{props = #'P_basic'{delivery_mode = 2},
+      payload = Msg}),
+
+  {noreply , State };
 handle_cast(_Request, State) ->
   {noreply, State}.
 
@@ -148,22 +175,6 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
-
-start_network_connection() ->
-  {ok,Connection} = amqp_manager:start_link()
-
-
-get_connection() ->
-  erlang:get(?AMQP_CONNECTION).
-
-set_connection() ->
-  erlang:put(?AMQP_CONNECTION) .
-
-set_queue() ->
-  erlang:put(?AMQP_CONNECTION).
-
-get_queue() ->
-  erlang:get(?AMQP_CONNECTION).
 
 
 
