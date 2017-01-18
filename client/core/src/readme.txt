@@ -1,24 +1,14 @@
-
-´«ÈëµÄÊý¾ÝÓÐ£º
-
-1.problem_id £¬ ÌâÄ¿ID
-2.time_lmt   ,  Ê±¼äÏÞÖÆ
-3.mem_lmt    ,  ¿Õ¼äÏÞÖÆ
-4.code       ,  ´úÂë
-5,solution_id,  solution_id
-
-
-´ó¸ÅÁ÷³ÌÆäÊµÈçÏÂ£º
-
-1.»ñÈ¡´«ÊäµÄÊý¾Ý
-2.´´½¨ÅÐÌâÎÄ¼þ¼Ð
-3.ÅÐÌâ
-4.¼ÇÂ¼ÅÐÌâÈÕÖ¾
+	ä¼ å…¥çš„å‚æ•°
+	problem_id
+	time_lmt
+	mem_lmt
+	solution_id
+	lang
+	code
 
 
 
+ÃÃ‚ÃƒÃ¦Â¹Â¦Ã„ÃœÃÃ¨Ã’ÂªÂ²Â¹ÃˆÂ«
 
-ÏÂÃæ¹¦ÄÜÐèÒª²¹È«
-
-1.´úÂëÏàËÆÐÔ¼ì²é
-2.Ö»Ö§³ÖACMÄ£Ê½£¬²»Ö§³ÖOIÄ£Ê½
+1.Â´ÃºÃ‚Ã«ÃÃ Ã‹Ã†ÃÃ”Â¼Ã¬Â²Ã©
+2.Ã–Â»Ã–Â§Â³Ã–ACMÃ„Â£ÃŠÂ½Â£Â¬Â²Â»Ã–Â§Â³Ã–OIÃ„Â£ÃŠÂ½
