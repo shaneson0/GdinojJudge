@@ -1,4 +1,4 @@
 
 all:
-	g++ gdin_judge.cc gdin_judge.h gdin_main.cc
+	g++ -Wall gdin_judge.cc gdin_judge.h gdin_main.cc
 
