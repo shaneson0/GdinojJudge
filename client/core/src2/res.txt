@@ -1,0 +1,2 @@
+g++ -Wall gdin_judge.cc gdin_judge.h gdin_main.cc
+makefile:3: recipe for target 'all' failed
