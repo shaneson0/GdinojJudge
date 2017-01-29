@@ -27,7 +27,8 @@ public:
 	gdin_judge(int argc , char ** argv ) ;
 	~gdin_judge();
 	void prepare() ;
-	int run() ;
+	int compile() ;
+	int run() ;	
 
 
 	int execute_cmd(const char * fmt, ...);				//
@@ -37,6 +38,28 @@ public:
 	int Cpplang() ;
 
 	std::string tostring(int ) ;
+
+	/*
+
+		judge函数
+
+	*/
+	void prepare_file() ;
+	void system_ctl() ;
+	void run_solution() ;
+	void watch_solution() ;
+
+
+	/*
+		
+		辅助函数
+	
+	*/
+
+	//判断是否是.*in文件
+	bool isInFile(const char fname[] );
+
+
 
 
 	/* data */

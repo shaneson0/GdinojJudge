@@ -46,7 +46,7 @@
 #include <unistd.h>
 #include <mysql/mysql.h>
 #include <assert.h>
-#include "okcalls.h"
+#include "okcalls.h"	
 
 #define STD_MB 1048576
 #define STD_T_LIM 2
@@ -174,6 +174,8 @@ void write_log(const char *fmt, ...) {
 	fclose(fp);
 
 }
+
+
 int execute_cmd(const char * fmt, ...) {
 	char cmd[BUFFER_SIZE];
 
@@ -907,7 +909,7 @@ int compile(int lang) {
 
 		if(lang==3){
 		   LIM.rlim_max = STD_MB << 11;
-		   LIM.rlim_cur = STD_MB << 11;
+		   LIM.rlim_cur = STD_MB << e11;
                 }else{
 		   LIM.rlim_max = STD_MB << 10;
 		   LIM.rlim_cur = STD_MB << 10;
@@ -1948,7 +1950,7 @@ void clean_workdir(char * work_dir) {
 void init_parameters(int argc, char ** argv, int & solution_id,
 		int & runner_id) {
 	if (argc < 3) {
-		fprintf(stderr, "Usage:%s solution_id runner_id.\n", argv[0]);
+		fprintf(stderr, "Usage:%s stderr	olution_id runner_id.\n", argv[0]);
 		fprintf(stderr, "Multi:%s solution_id runner_id judge_base_path.\n",
 				argv[0]);
 		fprintf(stderr,
@@ -1959,7 +1961,7 @@ void init_parameters(int argc, char ** argv, int & solution_id,
 	DEBUG = (argc > 4);
 	record_call = (argc > 5);
 	if (argc > 5) {
-		strcpy(LANG_NAME, argv[5]);
+		strcpy(LANG_NAME, argv[5]);	
 	}
 	if (argc > 3)
 		strcpy(oj_home, argv[3]);
@@ -2278,7 +2280,7 @@ int main(int argc, char** argv) {
 		namelen = isInFile(dirp->d_name); // check if the file is *.in or not
 		if (namelen == 0)
 			continue;
-
+		
 		if(http_judge&&(!data_list_has(dirp->d_name)))
 			continue;
 

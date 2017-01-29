@@ -12,6 +12,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <stdarg.h>
+#include <string.h>
 
 #define STD_MB 1048576
 
@@ -86,7 +87,59 @@ void gdin_judge::prepare() {
 
 }
 
+
+/*
+
+	运行代码
+*/
+
+void gdin_judge::prepare_file() {
+
+}
+
+void gdin_judge::system_ctl() {
+
+}
+
+void gdin_judge::run_solution() {
+
+}
+
+void gdin_judge::watch_solution() {
+	
+}
+
 int gdin_judge::run() {
+	// char fullpath[BUFFER_SIZE] ;  => this->data_path
+	std::string infile ;
+	std::string outfile ;
+	std::string userfile ;
+
+	//OPEN DIRS
+	DIRS *dp ;
+	dirent *dirp ;
+
+	if( dp = opendir( (this->data_path).data() ) == NULL ) {
+		perror("No suck file\n");
+		exit(-1);
+	}
+
+	//read files and run
+	bool Acflag = true ;
+	while( Acflag && (dirp = readdir(dp)) != NULL )
+	{
+		//判断一下是否是in文件
+		if( this->isInFile(dirp->d_name) ) {
+
+		}
+
+
+	}
+
+	
+}
+
+int gdin_judge::compile() {
 
 
 	//根据编译语言来使用不同的编译器
@@ -214,6 +267,20 @@ std::string gdin_judge::tostring(int num)
         std::ostringstream stm ;
         stm << num ;
         return stm.str() ;
+}
+
+//辅助函数,判断是否是in文件
+bool gdin_judge::isInFile(const char fname[])
+{
+	int l = strlen(fname) ;
+	if ( l <= 3 || strcmp( fname + l - 3 , ".in" ) != 0 )
+	{
+		/* code */
+		return false  ;
+	}
+
+	return true ;
+
 }
 
 

@@ -1,7 +1,7 @@
 
 
 
-##ifndef GDIN_JUDGE
+#ifndef GDIN_JUDGE
 #define gdin_judgeJUDGE 
 
 //定义报错信息
@@ -27,7 +27,6 @@ public:
 	/* data */
 private:
 	std::string code ;
-	std::string lang ;
 	int time_lmt ;
 	int mem_lmt ;
 	int lang ;

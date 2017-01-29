@@ -16,16 +16,17 @@
 	
 
 */
-public gdin_judge::gdin_judge(int argc , char ** argc ) {
+gdin_judge::gdin_judge(int argc , char ** argc ) {
 
-	if ( argc == 5 )
+	if ( argc == 6 )
 	{
 		 //read data
 		 sscanf( argc[0] , "%d" , &(this->problem_id) ) ;
 		 sscanf( argc[1] , "%d" , &(this->time_lmt) ) ;
 		 sscanf( argc[2] , "%d" , &(this->mem_lmt) ) ;
 		 sscanf( argc[3] , "%d" , &(this->solution_id )  ) ;
-		 this.code = argc[4] ;
+		 sscanf( argc[4] , "%d" , &(this->lang )) ;
+		 this.code = argc[5] ;
 
 		 std::cout << this->problem_id << " " << this->time_lmt << " " << this->mem_lmt << " " << this->solution_id << endl; 
 
@@ -33,8 +34,13 @@ public gdin_judge::gdin_judge(int argc , char ** argc ) {
 
 }
 
+gdin_judge::~gdin_judge() {
+	
+}
 
-public gdin_judge::gdin_judge() {
+
+
+gdin_judge::gdin_judge() {
 
 }
 
