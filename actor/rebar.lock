@@ -1,0 +1,26 @@
+{"1.1.0",
+[{<<"amqp_client">>,
+  {git,"git://github.com/jbrisbin/amqp_client.git",
+       {ref,"d50aec00b94f0766a048b4eceaf25ddfdeeb1d86"}},
+  0},
+ {<<"cowboy">>,
+  {git,"git://github.com/ninenines/cowboy",
+       {ref,"dbb636034f20736e16eb9d6c809217c9525b6cbd"}},
+  0},
+ {<<"cowlib">>,
+  {git,"https://github.com/ninenines/cowlib",
+       {ref,"0e7abe0b24593f131add272c275406d8ed231805"}},
+  1},
+ {<<"jiffy">>,{pkg,<<"jiffy">>,<<"0.14.11">>},0},
+ {<<"rabbit_common">>,
+  {git,"https://github.com/jbrisbin/rabbit_common.git",
+       {ref,"80814606ae23cc820c74e443383e192cd69ec030"}},
+  1},
+ {<<"ranch">>,
+  {git,"https://github.com/ninenines/ranch",
+       {ref,"741bfb73ca663394ecf7a73410506d66f01985a6"}},
+  1}]}.
+[
+{pkg_hash,[
+ {<<"jiffy">>, <<"919A87D491C5A6B5E3BBC27FAFEDC3A0761CA0B4C405394F121F582FD4E3F0E5">>}]}
+].
