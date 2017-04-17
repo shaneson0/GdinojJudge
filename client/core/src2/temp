@@ -1,0 +1,104 @@
+
+		wait4(Pid,&status , 0 , &ruse) ;
+			
+		//获得当前进程运行过程中占用内存的峰值
+		tempmemory = get_proc_status(Pid, "VmPeak:") << 10; 
+		if( tempmemory > topmemory )
+			topmemory = tempmemory ;
+
+		//判断是否出现内存溢出
+		if( topmemory > this->mem_lmt * STD_MB ) {
+			ACFlag = OJ_ML ;
+			ptrace( PTRACE_KILL , Pid , NULL ,NULL ) ;
+			break ;
+		}
+
+		//判断程序是否正常结束
+		if( WIFEXITED(Pid) )
+			break;
+		
+		printf("check re ..\n");
+		//检查是否RE
+		int file_size = get_file_size("error.out");
+		printf("filesize : %d\n",file_size);
+		if( file_size ) {
+			ACFlag = OJ_RE ;
+			ptrace( PTRACE_KILL , Pid , NULL , NULL );
+			break ;
+		}
+		
+		printf("check output limit ..\n");
+		//检查是否输出超出限制
+		if( get_file_size("user.out") >  get_file_size("data.out") * 2 + 1024 ) {
+			ACFlag = OJ_OL ;
+			ptrace( PTRACE_KILL , Pid , NULL , NULL ) ;
+			break ;
+		}
+
+		printf("check exit code ..\n");
+		//获取子进程的结束返回值
+		//检查是否RE
+		exitcode = WEXITSTATUS(status) ;
+		//c / c++ 中0表示正常结束
+		if( exitcode == 0 || exitcode == SIGTRAP ) {
+				//normal and go 
+		} else {
+			switch(exitcode) {
+				case SIGCHLD:
+				case SIGALRM:
+					alarm(0);	//清楚时钟
+				case SIGKILL:
+				case SIGXCPU:
+					ACFlag = OJ_TL;
+					break ;
+				case SIGXFSZ:
+					ACFlag = OJ_OL;	//单个文件的大小超出了操作系统原来的设置
+					break ;
+				default :
+					ACFlag = OJ_RE ;
+			}
+			print_runtime_error(strsignal(exitcode)) ;
+			ptrace( PTRACE_KILL , Pid , NULL , NULL ) ;
+			break ;
+		}
+
+		//暂时不检查信号的启动å
+		printf("check signal ..\n");
+		//检查子进程是否被信号突然中断
+		if( WIFSIGNALED(status) ) {
+			int sig = WTERMSIG(status) ;
+
+			switch(sig) {
+				case SIGCHLD :
+				case SIGALRM :
+					alarm(0) ;
+				case SIGKILL :
+				case SIGXCPU :
+					ACFlag = OJ_TL ;
+					break ;
+				case SIGXFSZ :
+					ACFlag = OJ_OL ;
+					break ;
+				default :
+					ACFlag = OJ_RE ;
+			}
+			print_runtime_error(strsignal(exitcode)) ;
+			break ;
+		}
+        
+		//检查全部系统调用
+		ptrace( PTRACE_GETREGS , Pid , NULL , &reg) ;
+		if( call_counter[reg.REG_SYSCALL] ) {
+			//这个信号允许使用
+		} else {
+			//发现非法程序调用
+			ACFlag = OJ_RE ;
+			char error[BUFFER_SIZE];
+			sprintf(error,"ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL);
+			perror( error ) ;
+			// write_log("ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL) ;
+			print_runtime_error(error);
+			ptrace( PTRACE_KILL , Pid , NULL , NULL ) ;
+
+		}
+		ptrace(PTRACE_SYSCALL, Pid, NULL, NULL);

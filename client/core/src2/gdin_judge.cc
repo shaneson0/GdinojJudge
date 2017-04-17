@@ -64,7 +64,6 @@ gdin_judge::gdin_judge(int argc , char ** argv ) {
 	if ( argc == 9 )
 	{
 		 //read data
-
 		 sscanf( argv[1] , "%d" , &(this->problem_id) ) ;
 		 sscanf( argv[2] , "%d" , &(this->time_lmt) ) ;
 		 sscanf( argv[3] , "%d" , &(this->mem_lmt) ) ;
@@ -87,6 +86,9 @@ gdin_judge::gdin_judge(int argc , char ** argv ) {
 
 		 std::cout <<  this->lang << " " << this->data_path << std::endl ;
 		 printf("argv[7] : %s , DEBUG : %d\n",argv[7] , this->DEBUG );
+
+		 //设置系统参数
+		 init_syscalls_limits(this->lang);
 
 	}
 
@@ -136,7 +138,41 @@ void gdin_judge::prepare() {
 	运行代码
 */
 
-
+void gdin_judge::ptraceTest()
+{
+	int status ;
+	pid_t child ;
+	long orig_eax;
+	child = fork();
+	if( child == 0 ) {
+		ptrace(PTRACE_TRACEME, 0, NULL, NULL);  
+        execl("/bin/ls", "ls", NULL);  
+	}else {
+		while(1) {
+			wait(&status) ;
+			printf("whileing of status : %d\n",status);
+			if(WIFEXITED(status))  
+              break;  
+			ptrace(PTRACE_CONT, child, NULL, NULL);
+		}
+		printf("end of status : %d\n",status);
+		// struct rusage ruse ;
+		// printf("wait for son process ..\n") ;
+		// status = 0 ;
+		// wait4(child,&status , 0 , &ruse) ;
+		// if( WIFSIGNALED(status) )
+		// {
+		// 	printf("end of signal.\n");
+		// }
+		// printf("pass1 status : %d\n");
+		// orig_eax = ptrace(PTRACE_PEEKUSER,   
+		// 				child, 4 * ORIG_EAX,   
+		// 				NULL);  
+        // printf("The child made a "  
+        //        "system call %ld ", orig_eax);  
+        // ptrace(PTRACE_CONT, child, NULL, NULL);
+	}
+}
 
 void gdin_judge::system_ctl() {
 
@@ -144,34 +180,20 @@ void gdin_judge::system_ctl() {
 
 void gdin_judge::run_solution(int &usedtime) {
 
-	printf("prepare run solution ..\n") ;
+
 	//设置它的调度优先级
 	nice(19) ;
 	//改变当前的工作路径，以便于直接运行代码
-	printf("chdir path : %s\n",this->RUN_PATH.data() );
 	int res = chdir(this->RUN_PATH.data());
 	if( res == -1 ){
 		perror("can't change dir\n") ;
 		exit(0) ;
 	}
-	printf("chdir success ..\n") ;
-	// //改变文件io流
-	freopen("data.in","r",stdin) ;
-	printf("preopen test1 ... success \n") ;
-
-	freopen("error.out" , "a+" , stderr ) ;
-
-	printf("call father to trace him .\n") ;
-	//trace
-	// ptrace(PTRACE_TRACEME,0,NULL,NULL) ;
-	
-	// -------------------
+	//-------------------
 	//run
-	// -------------------
-	printf("prepare run solution2 ..\n");
+	//-------------------
 
 	//改变项目跟路径
-	printf("chroot path : %s\n",this->RUN_PATH.data() );
 	chroot(this->RUN_PATH.data()) ;
 	//设置各个id
 	while (setgid(1536) != 0)
@@ -181,7 +203,6 @@ void gdin_judge::run_solution(int &usedtime) {
 	while (setresuid(1536, 1536, 1536) != 0)
 		sleep(1);
 
-	printf("control process limit ..\n") ;
 	//对进程占用的资源进行控制
 	//主要是涉及time limit , file limit , memory limit
 	struct rlimit LIM ;
@@ -192,7 +213,6 @@ void gdin_judge::run_solution(int &usedtime) {
 	//取消之前的时钟
 	alarm(0) ;
 	//设置时钟
-	printf("time_lmt : %d\n",this->time_lmt);
 	alarm(this->time_lmt) ;
 
 	//设置文件连接
@@ -215,8 +235,10 @@ void gdin_judge::run_solution(int &usedtime) {
 	setrlimit( RLIMIT_AS , &LIM ) ;
 
 	//运行结果
-	printf("run solution now !\n" ) ;
-	freopen("user.out" , "w" , stdout );
+	freopen("data.in","r",stdin);
+	freopen("user.out","w",stdout);
+	freopen("error.out","a+",stderr);
+	ptrace(PTRACE_TRACEME, 0, NULL, NULL); 
 	if( execl("./Main", "./Main", (char *) NULL) == -1 )
 	{
 		printf("run error!");
@@ -230,7 +252,7 @@ void gdin_judge::run_solution(int &usedtime) {
 
 void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *userfile , char *outfile , int &usedtime ) {
 
-	printf("judge solution now \n") ;
+
 	int tempmemory ;
 	int status ; 		//用于记录子进程的运行状态
 	int exitcode ;		//用于获取后八位的结束码
@@ -241,16 +263,13 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 	struct rusage ruse ;
 	while(1)
 	{
-		printf("wait for son process ..\n") ;
 		wait4(Pid,&status , 0 , &ruse) ;
-		printf("son process has ended  status : %d,is normal end : %d\n",status,WIFEXITED(Pid)) ;
-		
+
 		//获得当前进程运行过程中占用内存的峰值
-		tempmemory = get_proc_status(Pid, "VmPeak:") << 10; 
+		int tempmemory = get_proc_status(Pid, "VmPeak:") << 10; 
 		if( tempmemory > topmemory )
 			topmemory = tempmemory ;
 		
-		printf("topmemory : %d tempmemory : %d\n" , topmemory , tempmemory);
 		//判断是否出现内存溢出
 		if( topmemory > this->mem_lmt * STD_MB ) {
 			ACFlag = OJ_ML ;
@@ -258,22 +277,21 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 			break ;
 		}
 
-		printf("WIFEXITED ..\n");
-		//判断程序是否正常结束
-		if( WIFEXITED(Pid) )
-			break;
-		
-		printf("check re ..\n");
+		if(WIFEXITED(status))  
+			break; 
+
+		// printf("check re ..\n");
 		//检查是否RE
 		int file_size = get_file_size("error.out");
-		printf("filesize : %d\n",file_size);
+		// printf("filesize : %d\n",file_size);
 		if( file_size ) {
 			ACFlag = OJ_RE ;
-			// ptrace( PTRACE_KILL , Pid , NULL , NULL );
+			ptrace( PTRACE_KILL , Pid , NULL , NULL );
 			break ;
 		}
-			
-		printf("check output limit ..\n");
+
+
+		// printf("check output limit ..\n");
 		//检查是否输出超出限制
 		if( get_file_size(userfile) >  get_file_size(outfile) * 2 + 1024 ) {
 			ACFlag = OJ_OL ;
@@ -281,11 +299,13 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 			break ;
 		}
 
+
+		// printf("check exit code ..\n");
 		//获取子进程的结束返回值
 		//检查是否RE
 		exitcode = WEXITSTATUS(status) ;
 		//c / c++ 中0表示正常结束
-		if( exitcode == 0 ) {
+		if( exitcode == 0 || exitcode == SIGTRAP ) {
 				//normal and go 
 		} else {
 			switch(exitcode) {
@@ -309,49 +329,47 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 
 		//暂时不检查信号的启动å
 		// printf("check signal ..\n");
-		// //检查子进程是否被信号突然中断
-		// if( WIFSIGNALED(status) ) {
-		// 	int sig = WTERMSIG(status) ;
+		//检查子进程是否被信号突然中断
+		if( WIFSIGNALED(status) ) {
+			int sig = WTERMSIG(status) ;
 
-		// 	switch(sig) {
-		// 		case SIGCHLD :
-		// 		case SIGALRM :
-		// 			alarm(0) ;
-		// 		case SIGKILL :
-		// 		case SIGXCPU :
-		// 			ACFlag = OJ_TL ;
-		// 			break ;
-		// 		case SIGXFSZ :
-		// 			ACFlag = OJ_OL ;
-		// 			break ;
-		// 		default :
-		// 			ACFlag = OJ_RE ;
-		// 	}
-		// 	print_runtime_error(strsignal(exitcode)) ;
-		// 	break ;
-		// }
+			switch(sig) {
+				case SIGCHLD :
+				case SIGALRM :
+					alarm(0) ;
+				case SIGKILL :
+				case SIGXCPU :
+					ACFlag = OJ_TL ;
+					break ;
+				case SIGXFSZ :
+					ACFlag = OJ_OL ;
+					break ;
+				default :
+					ACFlag = OJ_RE ;
+			}
+			print_runtime_error(strsignal(exitcode)) ;
+			break ;
+		}
+		
+		//检查全部系统调用
+		ptrace( PTRACE_GETREGS , Pid , NULL , &reg) ;
+		if( call_counter[reg.REG_SYSCALL] ) {
+			//这个信号允许使用
+		} else {
+			//发现非法程序调用
+			ACFlag = OJ_RE ;
+			char error[BUFFER_SIZE];
+			sprintf(error,"ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL);
+			perror( error ) ;
+			// write_log("ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL) ;
+			print_runtime_error(error);
+			ptrace( PTRACE_KILL , Pid , NULL , NULL ) ;
+
+		}
 
 
-
-		// //检查全部系统调用
-		// ptrace( PTRACE_GETREGS , Pid , NULL , &reg) ;
-		// if( call_counter[reg.REG_SYSCALL] ) {
-		// 	//这个信号允许使用
-		// } else {
-		// 	//发现非法程序调用
-		// 	ACFlag = OJ_RE ;
-		// 	char error[BUFFER_SIZE];
-		// 	sprintf(error,"ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL);
-		// 	perror( error ) ;
-		// 	// write_log("ask shanxuan for solution : %d CallID : %ld . mail is 781244184@qq.com",solution_id, (long)reg.REG_SYSCALL) ;
-		// 	print_runtime_error(error);
-		// 	ptrace( PTRACE_KILL , Pid , NULL , NULL ) ;
-
-		// }
-		// ptrace(PTRACE_SYSCALL, Pid, NULL, NULL);
-		printf("while end ..\n") ;
-		break ;
-
+		ptrace(PTRACE_SYSCALL,   
+				Pid, NULL, NULL); 
 	}
 
 	usedtime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000);
@@ -361,7 +379,9 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 }
 
 int gdin_judge::run() {
-	// char fullpath[BUFFER_SIZE] ;  => this->data_path
+	int Acflag = OJ_AC ;
+
+	//Main Code
 	std::string infile ;
 	std::string outfile ;
 	std::string userfile ;
@@ -376,21 +396,17 @@ int gdin_judge::run() {
 	}
 
 	//read files and run
-	int Acflag = OJ_AC ;
 	int usertime = 0 ;
 	while( Acflag && (dirp = readdir(dp)) != NULL )
 	{
 		//判断一下是否是in文件
 		if( this->isInFile(dirp->d_name) ) {
-
-			printf("dirp->d_name : %s " , dirp->d_name ) ;
 			char userfile[BUFFER_SIZE] ;
 			char outfile[BUFFER_SIZE] ;
 
 			int namelen = strlen(dirp->d_name) ;
 			this->prepare_file(dirp->d_name,namelen,userfile , outfile);
 			pid_t AppPid = fork() ;
-			printf("AppPid : %d\n" , AppPid ) ;
 			if( AppPid == 0 )
 			{
 				// 子进程直接运行代码
@@ -399,8 +415,6 @@ int gdin_judge::run() {
 			{
 				//父进程监控子进程的运行结果
 				this->watch_solution(AppPid,this->mem_lmt,Acflag,userfile,outfile , usertime ) ;
-				Acflag = this->judge_solution(userfile,outfile) ;
-				printf("res : %d\n",Acflag ) ;
 			}
 
 		}
@@ -440,7 +454,6 @@ int gdin_judge::Clang() {
 	if ( pid == 0 )
 	{
 
-		printf("is debug : %d\n",this->DEBUG );
 
 		if( this->DEBUG ) {
 			int size = 100 ;

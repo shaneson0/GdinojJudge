@@ -11,7 +11,7 @@
 #define STD_F_LIM (STD_MB<<5)
 #define STD_M_LIM (STD_MB<<7)
 
-#define HOJ_MAX_LIMIT -1
+#define HOJ_MAX_LIMIT 1
 
 
 
@@ -87,6 +87,7 @@ public:
 
 	//判断是否是.*in文件
 	bool isInFile(const char fname[] );
+	void ptraceTest();
 
 
 
