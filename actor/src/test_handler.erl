@@ -1,47 +1,46 @@
 
 -module(test_handler).
+
+-include_lib("task.hrl").
 -export([init/2]).
 
--export([content_types_provided/2]).
--export([hello_to_html/2]).
--export([hello_to_json/2]).
--export([hello_to_text/2]).
-
--include("task.hrl").
-
 init(Req, Opts) ->
-	{cowboy_rest, Req, Opts}.
+	Method = cowboy_req:method(Req),
+	HasBody = cowboy_req:has_body(Req),
+	Req2 = maybe_echo(Method, HasBody, Req),
+	{ok, Req2, Opts}.
 
-content_types_provided(Req, State) ->
-	{[
-		{<<"text/html">>, hello_to_html},
-		{<<"application/json">>, hello_to_json},
-		{<<"text/plain">>, hello_to_text}
-	], Req, State}.
+maybe_echo(<<"POST">>, true, Req) ->
+	io:format("pass1~n"),
+	{ok, PostVals, Req2} = cowboy_req:body_qs(Req),
+	Task = solve_req(PostVals),
+	publiser:publish(Task),
+	Echo  = <<"ok">>,
+	echo(Echo, Req2);
+maybe_echo(<<"POST">>, false, Req) ->
+	cowboy_req:reply(400, [], <<"Missing body.">>, Req);
+maybe_echo(_, _, Req) ->
+	%% Method not allowed.
+	cowboy_req:reply(405, Req).
 
-hello_to_html(Req, State) ->
+echo(undefined, Req) ->
+	cowboy_req:reply(400, [], <<"Missing echo parameter.">>, Req);
+echo(Echo, Req) ->
+	cowboy_req:reply(200, [
+		{<<"content-type">>, <<"text/plain; charset=utf-8">>}
+	], Echo, Req).
 
-	Body = <<"<html>
-<head>
-	<meta charset=\"utf-8\">
-	<title>REST Hello World!</title>
-</head>
-<body>
-	<p>REST Hello World as HTML!</p>
-</body>
-</html>">>,
-	{Body, Req, State}.
 
-hello_to_json(Req, State) ->
-	Arguments = [time_limit , mem_limit , problem_id , solution_id , code , lang ] ,
-	#{time_limit := Time_lim , mem_limit := Mem_lim , problem_id := Problem_id ,solution_id := Solution_id , code := Code , lang := Lang }
-		= cowboy_req:match_qs(Arguments, Req),
-	NewTask = #task{time_limit = Time_lim , mem_limit = Mem_lim , problem_id = Problem_id , solutoin_id = Solution_id , code = Code , lang = Lang } ,
-	publiser:publish(NewTask),
+solve_req(PostVals) ->
+	TimeLimit = proplists:get_value(<<"time_limit">>, PostVals),
+	MemLimit = proplists:get_value(<<"mem_limit">>, PostVals),
+	ProblemId = proplists:get_value(<<"problem_id">>, PostVals),
+	SolutionId = proplists:get_value(<<"solution_id">>, PostVals),
+	Code = 	 proplists:get_value(<<"code">>, PostVals),
+	Lang = 	 proplists:get_value(<<"lang">>, PostVals),
+	Task = #task{time_limit = TimeLimit,mem_limit = MemLimit,problem_id = ProblemId,solutoin_id = SolutionId,code = Code,lang = Lang},
+	Task.
 
-	Body = <<"{\"success\":true,\"msg\":\"\",\"data\":\"\"}">>,
-	{Body, Req, State}.
-hello_to_text(Req, State) ->
-	{<<"REST Hello World as text!">>, Req, State}.
+
 
 

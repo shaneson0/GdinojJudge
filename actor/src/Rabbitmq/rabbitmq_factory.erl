@@ -52,6 +52,9 @@ init([]) ->
   {ok, Connection} =
     amqp_connection:start(#amqp_params_network{host = "localhost"}),
   {ok, Channel} = amqp_connection:open_channel(Connection),
+  amqp_channel:call(Channel, #'queue.declare'{queue = <<"task_queue">>,
+    durable = true}),
+
   {ok, #state{channel = Channel,connect = Connection}}.
 
 handle_call( {getchannel} , _From , State )->

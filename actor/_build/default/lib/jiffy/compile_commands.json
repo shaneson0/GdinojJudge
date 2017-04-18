@@ -1,0 +1,58 @@
+[
+{ "file"      : "c_src/decoder.c"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "cc -c -Ic_src/ -g -Wall -Werror -O3 -fno-strict-aliasing -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/decoder.c -o c_src/decoder.o"
+},
+{ "file"      : "c_src/encoder.c"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "cc -c -Ic_src/ -g -Wall -Werror -O3 -fno-strict-aliasing -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/encoder.c -o c_src/encoder.o"
+},
+{ "file"      : "c_src/jiffy.c"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "cc -c -Ic_src/ -g -Wall -Werror -O3 -fno-strict-aliasing -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/jiffy.c -o c_src/jiffy.o"
+},
+{ "file"      : "c_src/utf8.c"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "cc -c -Ic_src/ -g -Wall -Werror -O3 -fno-strict-aliasing -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/utf8.c -o c_src/utf8.o"
+},
+{ "file"      : "c_src/util.c"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "cc -c -Ic_src/ -g -Wall -Werror -O3 -fno-strict-aliasing -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/util.c -o c_src/util.o"
+},
+{ "file"      : "c_src/doubles.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/doubles.cc -o c_src/doubles.o"
+},
+{ "file"      : "c_src/double-conversion/bignum-dtoa.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/bignum-dtoa.cc -o c_src/double-conversion/bignum-dtoa.o"
+},
+{ "file"      : "c_src/double-conversion/bignum.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/bignum.cc -o c_src/double-conversion/bignum.o"
+},
+{ "file"      : "c_src/double-conversion/cached-powers.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/cached-powers.cc -o c_src/double-conversion/cached-powers.o"
+},
+{ "file"      : "c_src/double-conversion/diy-fp.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/diy-fp.cc -o c_src/double-conversion/diy-fp.o"
+},
+{ "file"      : "c_src/double-conversion/double-conversion.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/double-conversion.cc -o c_src/double-conversion/double-conversion.o"
+},
+{ "file"      : "c_src/double-conversion/fast-dtoa.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/fast-dtoa.cc -o c_src/double-conversion/fast-dtoa.o"
+},
+{ "file"      : "c_src/double-conversion/fixed-dtoa.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/fixed-dtoa.cc -o c_src/double-conversion/fixed-dtoa.o"
+},
+{ "file"      : "c_src/double-conversion/strtod.cc"
+, "directory" : "/Users/csx/GitProject/GdinJudge/GdinojJudge/actor/_build/default/lib/jiffy"
+, "command"   : "c++ -c -Ic_src/ -g -Wall -Werror -O3 -g -Wall -fPIC -MMD -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/lib/erl_interface-3.9.1/include\" -I\"/usr/local/Cellar/erlang/19.1/lib/erlang/erts-8.1/include\" c_src/double-conversion/strtod.cc -o c_src/double-conversion/strtod.o"
+}
+]

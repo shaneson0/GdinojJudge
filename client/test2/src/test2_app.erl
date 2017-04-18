@@ -15,7 +15,9 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    test2_sup:start_link().
+    rabbitmq_factory:start_link(),
+    test2_sup:start_link(),
+    comsumer:comsume().
 
 %%--------------------------------------------------------------------
 stop(_State) ->

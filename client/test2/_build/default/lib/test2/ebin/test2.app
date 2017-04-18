@@ -1,0 +1,11 @@
+{application,test2,
+             [{description,"An OTP application"},
+              {vsn,"0.1.0"},
+              {registered,[]},
+              {mod,{test2_app,[]}},
+              {applications,[kernel,stdlib]},
+              {env,[]},
+              {modules,[comsumer,rabbitmq_factory,test2,test2_app,test2_sup]},
+              {maintainers,[]},
+              {licenses,[]},
+              {links,[]}]}.

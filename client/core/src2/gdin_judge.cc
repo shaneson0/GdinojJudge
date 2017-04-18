@@ -374,8 +374,6 @@ void gdin_judge::watch_solution(pid_t Pid , int topmemory , int &ACFlag, char *u
 
 	usedtime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000);
 	usedtime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000);
-
-	
 }
 
 int gdin_judge::run() {
