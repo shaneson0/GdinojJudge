@@ -14,12 +14,14 @@ Run
 -----
 
 ####actor
+
 	cd actor
 	rebar3 compile
 	chmod +x start.sh
 	./start.sh
 
 ####client
+
 	cd client
 	rebar3 compile
 	chmod +x
